@@ -5,13 +5,16 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "./ui/button";
+import { checkUser } from "@/lib/checkUser";
 import { LayoutDashboard, PenBox } from "lucide-react";
 
-const Header = () => {
+const Header = async () => {
+  await checkUser();
+
   return (
     <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -36,6 +39,7 @@ const Header = () => {
                 <span className="hidden md:inline">Dashboard</span>
               </Button>
             </Link>
+
             <Link href="/transaction/create">
               <Button className="flex items-center gap-2">
                 <PenBox size={18} />

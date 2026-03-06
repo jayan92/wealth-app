@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// npx prisma migrate dev --name create-models
+
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -11,4 +13,162 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
+model User {
+  id            String    @id @default(uuid())
+  clerkUserId   String    @unique // clerk user id
+  email         String    @unique
+  name          String?
+  imageUrl      String?
+  transactions  Transaction[]
+  accounts      Account[]
+  budgets       Budget[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("users")
+}
+
+model Account {
+  id           String        @id @default(uuid())
+  name         String
+  type         AccountType
+  balance      Decimal       @default(0) // will ask inital balance while creating an account
+  isDefault    Boolean       @default(false)
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Transaction {
+  id                String            @id @default(uuid())
+  type             TransactionType
+  amount           Decimal
+  description      String?
+  date             DateTime
+  category         String           
+  receiptUrl       String?
+  isRecurring      Boolean           @default(false)
+  recurringInterval RecurringInterval? // Only used if isRecurring is true
+  nextRecurringDate DateTime?         // Next date for recurring transaction
+  lastProcessed    DateTime?         // Last time this recurring transaction was processed
+  status           TransactionStatus  @default(COMPLETED)
+  userId           String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId        String
+  account          Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+  @@map("transactions")
+}
+
+
+model Budget {
+  id          String       @id @default(uuid())
+  amount      Decimal
+  lastAlertSent DateTime?  // Track when the last alert was sent
+  userId      String       @unique
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([userId])
+  @@map("budgets")
+}
+
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum AccountType {
+  CURRENT
+  SAVINGS
+  CREDIT_CARD
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum RecurringInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+// ---
+
+// ## 🔑 Special Keywords & Functions in Prisma Schema
+
+// ### **`generator client { ... }`**
+// - Defines how Prisma should generate the **Prisma Client** (the TypeScript/JS API you use in code).
+// - `provider = "prisma-client"` → tells Prisma to generate the client.
+// - `output = "../lib/generated/prisma"` → custom output folder for the generated client.
+
+// ---
+
+// ### **`datasource db { ... }`**
+// - Defines the database connection.
+// - `provider = "postgresql"` → specifies PostgreSQL as the database engine.
+// - Normally also includes `url = env("DATABASE_URL")` to connect to your DB.
+
+// ---
+
+// ### **Model-level keywords**
+// - **`model User { ... }`** → Defines a table called `User` (mapped to DB).
+// - **`@@map("users")`** → Renames the table in the database to `"users"` (instead of default `"User"`).
+// - **`@@index([userId])`** → Creates an index on the `userId` column for faster queries.
+
+// ---
+
+// ### **Field-level keywords**
+// - **`@id`** → Marks the field as the **primary key**.
+// - **`@default(uuid())`** → Auto-generates a UUID when a new record is created.
+// - **`@default(now())`** → Auto-fills with the current timestamp.
+// - **`@updatedAt`** → Automatically updates the field whenever the record changes.
+// - **`@unique`** → Ensures the field value is unique across all rows (e.g., email).
+// - **`@relation(...)`** → Defines a foreign key relationship between models.
+//   - `fields: [userId]` → local field used as FK.
+//   - `references: [id]` → target field in the related model.
+//   - `onDelete: Cascade` → if the parent record is deleted, child records are deleted too.
+
+// ---
+
+// ### **Types**
+// - **`String`, `DateTime`, `Decimal`, `Boolean`** → Prisma scalar types (map to DB types).
+// - **`Transaction[]`** → One-to-many relation (a user has many transactions).
+// - **`AccountType`, `TransactionType`, `RecurringInterval`, `TransactionStatus`** → Enums (defined elsewhere in your schema).
+
+// ---
+
+// ### **Other Functions**
+// - **`uuid()`** → Generates a universally unique identifier.
+// - **`now()`** → Inserts the current timestamp.
+// - **`Cascade`** → Referential action: delete child rows when parent is deleted.
+
+// ---
+
+// ## ⚡ In Short
+// - `@id`, `@unique`, `@default`, `@updatedAt` → field constraints & auto-values.  
+// - `@relation`, `@@map`, `@@index` → relationships, table naming, and performance optimizations.  
+// - `uuid()`, `now()` → built-in functions for auto-generated values.  
+// - `Cascade` → ensures relational integrity when deleting records.  
+
+// ---
+
