@@ -183,7 +183,7 @@ const TransactionTable = ({ transactions }) => {
 
   useEffect(() => {
     if (deleted && !deleteLoading) {
-      toast.error("Transactions deleted successfully");
+      toast.success("Transactions deleted successfully");
     }
   }, [deleted, deleteLoading]);
 
@@ -248,8 +248,8 @@ const TransactionTable = ({ transactions }) => {
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="INCOME">Recurring Only</SelectItem>
-              <SelectItem value="EXPENSE">Non-Recurring Only</SelectItem>
+              <SelectItem value="recurring">Recurring Only</SelectItem>
+              <SelectItem value="non-recurring">Non-recurring Only</SelectItem>
             </SelectContent>
           </Select>
 

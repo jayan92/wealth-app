@@ -23,6 +23,7 @@ export async function getCurrentBudget(accountId) {
       },
     });
 
+    // Get current month's expenses
     const currentDate = new Date();
 
     const startOfMonth = new Date(

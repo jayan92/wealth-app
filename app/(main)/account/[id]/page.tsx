@@ -8,7 +8,6 @@ import AccountChart from "./_components/account-chart";
 const AccountPage = async ({ params }) => {
   const { id } = await params;
   const accountData = await getAccountWithTransactions(id);
-  console.log("🚀 ~ AccountPage ~ accountData:", accountData);
 
   if (!accountData) {
     notFound();
