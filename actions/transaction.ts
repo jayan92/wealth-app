@@ -9,13 +9,14 @@ import { request } from "@arcjet/next";
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const serializeAmount = (obj) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const serializeAmount = (obj: any) => ({
   ...obj,
   amount: obj.amount.toNumber(),
 });
 
 // Create Transaction
-export async function createTransaction(data) {
+export async function createTransaction(data: any) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -70,7 +71,7 @@ export async function createTransaction(data) {
     const newBalance = account.balance.toNumber() + balanceChange;
 
     // Create transaction and update account balance
-    const transaction = await db.$transaction(async (tx) => {
+    const transaction = await db.$transaction(async (tx: any) => {
       const newTransaction = await tx.transaction.create({
         data: {
           ...data,
@@ -95,11 +96,11 @@ export async function createTransaction(data) {
 
     return { success: true, data: serializeAmount(transaction) };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error((error as Error).message);
   }
 }
 
-export async function getTransaction(id) {
+export async function getTransaction(id: string) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -121,7 +122,7 @@ export async function getTransaction(id) {
   return serializeAmount(transaction);
 }
 
-export async function updateTransaction(id, data) {
+export async function updateTransaction(id: string, data: any) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -157,7 +158,7 @@ export async function updateTransaction(id, data) {
     const netBalanceChange = newBalanceChange - oldBalanceChange;
 
     // Update transaction and account balance in a transaction
-    const transaction = await db.$transaction(async (tx) => {
+    const transaction = await db.$transaction(async (tx: any) => {
       const updated = await tx.transaction.update({
         where: {
           id,
@@ -190,7 +191,7 @@ export async function updateTransaction(id, data) {
 
     return { success: true, data: serializeAmount(transaction) };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error((error as Error).message);
   }
 }
 
@@ -223,12 +224,12 @@ export async function getUserTransactions(query = {}) {
 
     return { success: true, data: transactions };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error((error as Error).message);
   }
 }
 
 // Scan Receipt
-export async function scanReceipt(file) {
+export async function scanReceipt(file: File) {
   try {
     const arrayBuffer = await file.arrayBuffer();
     const base64String = Buffer.from(arrayBuffer).toString("base64");
@@ -273,7 +274,7 @@ export async function scanReceipt(file) {
     console.log("🚀 ~ scanReceipt ~ response:", response.text);
 
     // The response object is much flatter now
-    const text = response.text;
+    const text = response.text ?? "";
     const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
     const data = JSON.parse(cleanedText);
 
@@ -291,7 +292,7 @@ export async function scanReceipt(file) {
 }
 
 // Helper function to calculate next recurring date
-function calculateNextRecurringDate(startDate, interval) {
+function calculateNextRecurringDate(startDate: Date, interval: string) {
   const date = new Date(startDate);
 
   switch (interval) {

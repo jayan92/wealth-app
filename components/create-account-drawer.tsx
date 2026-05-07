@@ -108,7 +108,7 @@ const CreateAccountDrawer = ({ children }) => {
                 Account Type
               </label>
               <Select
-                onValueChange={(value) => setValue("type", value)}
+                onValueChange={(value) => setValue("type", value as "CURRENT" | "SAVINGS" | "CREDIT_CARD")}
                 defaultValue={watch("type")}
               >
                 <SelectTrigger id="type" className="w-full">

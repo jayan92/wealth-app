@@ -1,9 +1,10 @@
 "use server";
 
+import React from "react";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 
-export async function sendEmail({ to, subject, react }) {
+export async function sendEmail({ to, subject, react }: { to: string; subject: string; react: React.ReactElement }) {
   const apiKey = process.env.RESEND_API_KEY;
 
   if (!apiKey) {

@@ -17,7 +17,7 @@ const DashboardPage = async () => {
   const defaultAccount = accounts?.find((account) => account.isDefault);
 
   // Get budget for default account
-  let budgetData = null;
+  let budgetData: Awaited<ReturnType<typeof getCurrentBudget>> | null = null;
   if (defaultAccount) {
     budgetData = await getCurrentBudget(defaultAccount.id);
   }

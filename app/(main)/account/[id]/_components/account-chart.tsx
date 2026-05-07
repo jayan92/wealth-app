@@ -35,41 +35,32 @@ const DATE_RANGES = {
   ALL: { label: "All Time", days: null },
 };
 
-const AccountChart = ({ transactions }) => {
+type DayTotal = { date: string; income: number; expense: number };
+
+const AccountChart = ({ transactions }: { transactions: any[] }) => {
   const [dateRange, setDateRange] = useState("1M");
 
   const filteredData = useMemo(() => {
-    const range = DATE_RANGES[dateRange];
+    const range = DATE_RANGES[dateRange as keyof typeof DATE_RANGES];
     const now = new Date();
     const startDate = range.days
       ? startOfDay(subDays(now, range.days))
       : startOfDay(new Date(0));
 
-    // Filter transactions within date range
     const filtered = transactions.filter(
-      (t) => new Date(t.date) >= startDate && new Date(t.date) <= endOfDay(now),
+      (t: any) => new Date(t.date) >= startDate && new Date(t.date) <= endOfDay(now),
     );
 
-    // Group transactions by date
-    const grouped = filtered.reduce((acc, transaction) => {
+    const grouped = filtered.reduce((acc: Record<string, DayTotal>, transaction: any) => {
       const date = format(new Date(transaction.date), "MMM dd");
-
-      if (!acc[date]) {
-        acc[date] = { date, income: 0, expense: 0 };
-      }
-
-      if (transaction.type === "INCOME") {
-        acc[date].income += transaction.amount;
-      } else {
-        acc[date].expense += transaction.amount;
-      }
-
+      if (!acc[date]) acc[date] = { date, income: 0, expense: 0 };
+      if (transaction.type === "INCOME") acc[date].income += transaction.amount;
+      else acc[date].expense += transaction.amount;
       return acc;
     }, {});
 
-    // Convert to array and sort by date
     return Object.values(grouped).sort(
-      (a, b) => new Date(a.date) - new Date(b.date),
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
   }, [transactions, dateRange]);
 

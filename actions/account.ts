@@ -4,18 +4,15 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-const serializeDecimal = (obj) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const serializeDecimal = (obj: any) => {
   const serialized = { ...obj };
-  if (obj.balance) {
-    serialized.balance = obj.balance.toNumber();
-  }
-  if (obj.amount) {
-    serialized.amount = obj.amount.toNumber();
-  }
+  if (obj.balance) serialized.balance = obj.balance.toNumber();
+  if (obj.amount) serialized.amount = obj.amount.toNumber();
   return serialized;
 };
 
-export async function updateDefaultAccount(accountId) {
+export async function updateDefaultAccount(accountId: string) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -51,11 +48,11 @@ export async function updateDefaultAccount(accountId) {
     revalidatePath("/dashboard");
     return { success: true, data: serializeDecimal(account) };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: (error as Error).message };
   }
 }
 
-export async function getAccountWithTransactions(accountId) {
+export async function getAccountWithTransactions(accountId: string) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -90,7 +87,7 @@ export async function getAccountWithTransactions(accountId) {
   };
 }
 
-export async function bulkDeleteTransactions(transactionIds) {
+export async function bulkDeleteTransactions(transactionIds: string[]) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -110,7 +107,7 @@ export async function bulkDeleteTransactions(transactionIds) {
     });
 
     // Group transactions by account to update balances
-    const accontBalanceChanges = transactions.reduce((acc, transaction) => {
+    const accontBalanceChanges = transactions.reduce((acc: Record<string, number>, transaction: any) => {
       const change =
         transaction.type === "EXPENSE"
           ? transaction.amount
@@ -123,7 +120,7 @@ export async function bulkDeleteTransactions(transactionIds) {
     }, {});
 
     // Delete transactions and update account balances in a transaction
-    await db.$transaction(async (tx) => {
+    await db.$transaction(async (tx: any) => {
       // Delete transactions
       await tx.transaction.deleteMany({
         where: {
@@ -152,6 +149,6 @@ export async function bulkDeleteTransactions(transactionIds) {
 
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: (error as Error).message };
   }
 }

@@ -21,7 +21,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <head>
-          <link rel="icon" href="/logo-sm.png" size="any" />
+          <link rel="icon" href="/logo-sm.png" sizes="any" />
         </head>
 
         <body className={`${inter.className}`}>

@@ -6,10 +6,11 @@ import { Button } from "./ui/button";
 import { useEffect, useRef } from "react";
 
 const HeroSection = () => {
-  const imageRef = useRef(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const imageElement = imageRef.current;
+    if (!imageElement) return;
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY;

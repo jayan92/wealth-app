@@ -64,8 +64,8 @@ const RECURRING_INTERVALS = {
   YEARLY: "Yearly",
 };
 
-const TransactionTable = ({ transactions }) => {
-  const [selectedIds, setSelectedIds] = useState([]);
+const TransactionTable = ({ transactions }: { transactions: any[] }) => {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [sortConfig, setSortConfig] = useState({
     field: "date",
     direction: "desc",
@@ -108,7 +108,7 @@ const TransactionTable = ({ transactions }) => {
 
       switch (sortConfig.field) {
         case "date":
-          comparison = new Date(a.date) - new Date(b.date);
+          comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
           break;
         case "amount":
           comparison = a.amount - b.amount;
@@ -140,7 +140,7 @@ const TransactionTable = ({ transactions }) => {
     );
   }, [filteredAndSortedTransactions, currentPage]);
 
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     setSortConfig((current) => ({
       field,
       direction:
@@ -148,7 +148,7 @@ const TransactionTable = ({ transactions }) => {
     }));
   };
 
-  const handleSelect = (id) => {
+  const handleSelect = (id: string) => {
     setSelectedIds((current) =>
       current.includes(id)
         ? current.filter((item) => item !== id)

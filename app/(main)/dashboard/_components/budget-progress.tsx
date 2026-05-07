@@ -34,7 +34,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
     : 0;
 
   const handleUpdateBudget = async () => {
-    const amount = parseFloat(newBudget).toFixed(2);
+    const amount = parseFloat(newBudget);
 
     if (isNaN(amount) || amount <= 0) {
       toast.error("Please enter a valid amount");
@@ -56,7 +56,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.message || "Failed to update budget");
+      toast.error(error?.message || "Failed to update budget");
     }
   }, [error]);
 

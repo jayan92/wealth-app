@@ -29,12 +29,12 @@ const CATEGORIES = {
 };
 
 // Helper to generate random amount within a range
-function getRandomAmount(min, max) {
+function getRandomAmount(min: number, max: number) {
   return Number((Math.random() * (max - min) + min).toFixed(2));
 }
 
 // Helper to get random category with amount
-function getRandomCategory(type) {
+function getRandomCategory(type: keyof typeof CATEGORIES) {
   const categories = CATEGORIES[type];
   const category = categories[Math.floor(Math.random() * categories.length)];
   const amount = getRandomAmount(category.range[0], category.range[1]);
@@ -44,7 +44,7 @@ function getRandomCategory(type) {
 export async function seedTransactions() {
   try {
     // Generate 90 days of transactions
-    const transactions = [];
+    const transactions: any[] = [];
     let totalBalance = 0;
 
     for (let i = 90; i >= 0; i--) {
@@ -80,7 +80,7 @@ export async function seedTransactions() {
     }
 
     // Insert transactions in batches and update account balance
-    await db.$transaction(async (tx) => {
+    await db.$transaction(async (tx: any) => {
       // Clear existing transactions
       await tx.transaction.deleteMany({
         where: { accountId: ACCOUNT_ID },
@@ -104,6 +104,6 @@ export async function seedTransactions() {
     };
   } catch (error) {
     console.error("Error seeding transactions:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: (error as Error).message };
   }
 }

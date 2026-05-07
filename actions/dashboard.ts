@@ -4,7 +4,8 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-const serializeTransaction = (obj) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const serializeTransaction = (obj: any) => {
   const serialized = { ...obj };
 
   if (obj.balance) {
@@ -48,11 +49,11 @@ export async function getUserAccounts() {
 
     return serializedAccounts;
   } catch (error) {
-    console.log(error.message);
+    console.log((error as Error).message);
   }
 }
 
-export async function createAccount(data) {
+export async function createAccount(data: any) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -99,7 +100,7 @@ export async function createAccount(data) {
 
     return { success: true, data: serializedAccount };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error((error as Error).message);
   }
 }
 

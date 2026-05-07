@@ -35,7 +35,7 @@ export default function AddTransactionForm({
   accounts,
   categories,
   editMode = false,
-  initialData = null,
+  initialData = null as any,
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -150,7 +150,7 @@ export default function AddTransactionForm({
           </SelectContent>
         </Select>
         {errors.type && (
-          <p className="text-sm text-red-500">{errors.type.message}</p>
+          <p className="text-sm text-red-500">{errors.type.message as string}</p>
         )}
       </div>
 
@@ -165,7 +165,7 @@ export default function AddTransactionForm({
             {...register("amount")}
           />
           {errors.amount && (
-            <p className="text-sm text-red-500">{errors.amount.message}</p>
+            <p className="text-sm text-red-500">{errors.amount.message as string}</p>
           )}
         </div>
 
@@ -195,7 +195,7 @@ export default function AddTransactionForm({
             </SelectContent>
           </Select>
           {errors.accountId && (
-            <p className="text-sm text-red-500">{errors.accountId.message}</p>
+            <p className="text-sm text-red-500">{errors.accountId.message as string}</p>
           )}
         </div>
       </div>
@@ -219,7 +219,7 @@ export default function AddTransactionForm({
           </SelectContent>
         </Select>
         {errors.category && (
-          <p className="text-sm text-red-500">{errors.category.message}</p>
+          <p className="text-sm text-red-500">{errors.category.message as string}</p>
         )}
       </div>
 
@@ -252,7 +252,7 @@ export default function AddTransactionForm({
           </PopoverContent>
         </Popover>
         {errors.date && (
-          <p className="text-sm text-red-500">{errors.date.message}</p>
+          <p className="text-sm text-red-500">{errors.date.message as string}</p>
         )}
       </div>
 
@@ -261,7 +261,7 @@ export default function AddTransactionForm({
         <label className="text-sm font-medium">Description</label>
         <Input placeholder="Enter description" {...register("description")} />
         {errors.description && (
-          <p className="text-sm text-red-500">{errors.description.message}</p>
+          <p className="text-sm text-red-500">{errors.description.message as string}</p>
         )}
       </div>
 
@@ -299,7 +299,7 @@ export default function AddTransactionForm({
           </Select>
           {errors.recurringInterval && (
             <p className="text-sm text-red-500">
-              {errors.recurringInterval.message}
+              {errors.recurringInterval.message as string}
             </p>
           )}
         </div>
