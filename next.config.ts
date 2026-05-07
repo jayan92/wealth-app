@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    outputFileTracingIncludes: {
-      "/**": ["./lib/generated/prisma/**"],
-    },
+  outputFileTracingIncludes: {
+    "/**": ["./lib/generated/prisma/**"],
   },
   images: {
     remotePatterns: [
